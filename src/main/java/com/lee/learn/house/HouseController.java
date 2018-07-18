@@ -81,8 +81,8 @@ public class HouseController {
      * @return
      */
     @GetMapping("/house/ershoufang/prompt")
-    public ResponseEntity housePrompt(){
-
+    public ResponseEntity housePrompt(@RequestParam(required = true) String keyWord){
+        System.out.println(keyWord);
         return null;
     }
 }
