@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Administrator on 2018/7/16.
@@ -20,6 +21,7 @@ import java.util.Random;
 @Component
 public class LianjiaCrawler extends RamCrawler {
 
+    private AtomicInteger houseIndexId = new AtomicInteger(1);
 
     @Autowired
     private HouseIndexOperator indexOperator;
@@ -47,13 +49,14 @@ public class LianjiaCrawler extends RamCrawler {
      * 顶秀欣园西苑 /2室1厅/91.39平米/南/简装/有电梯
      * 中楼层(共22层)/2003年建塔楼/赵公口
      */
-    public static House createHouse(Page doc) {
+    public House createHouse(Page doc) {
         //            Document doc = Jsoup.connect("https://bj.lianjia.com/ershoufang/101103038684.html").get();
         House house = new House();
+        house.setHouseId((long) houseIndexId.getAndIncrement());
         String title = doc.select("body > div.sellDetailHeader > div > div > div.title > h1").text();
         house.setTitle(title);
         String price = doc.select("body > div.overview > div.content > div.price > span.total").text();
-        house.setPrice(Integer.parseInt(price));
+        house.setPrice(Double.parseDouble(price));
         String xiaoQu = doc.select("body > div.overview > div.content > div.aroundInfo > div.communityName > a.info").text();
         house.setXiaoQu(xiaoQu);
         String jingjiren = doc.select("body > div.overview > div.content > div.brokerInfo.clear > div > div.brokerName > a").text();

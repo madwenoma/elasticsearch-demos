@@ -40,6 +40,8 @@ public class HouseController {
             boolBuilder.must(QueryBuilders.matchQuery("xiaoQu", xiaoQu));
         if (jingJiRen != null)
             boolBuilder.must(QueryBuilders.matchQuery("jingJiRen", jingJiRen));
+        if (title != null)
+            boolBuilder.must(QueryBuilders.matchQuery("title", title));
         if (tiHuBiLi != null)
             boolBuilder.must(QueryBuilders.matchQuery("tiHuBiLi", jingJiRen));
 
@@ -64,7 +66,7 @@ public class HouseController {
         }
 
         SearchRequestBuilder requestBuilder = esClient.prepareSearch("house").setTypes("ershoufang").setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
-        requestBuilder.setQuery(boolBuilder).setFrom(1).setSize(1).addSort("price",SortOrder.ASC);
+        requestBuilder.setQuery(boolBuilder).setFrom(1).setSize(10).addSort("price", SortOrder.ASC);
         SearchResponse rsp = requestBuilder.get();
         List<Map<String, Object>> results = new ArrayList<>();
         for (SearchHit hit : rsp.getHits()) {
@@ -77,11 +79,12 @@ public class HouseController {
 
 
     /**
-     *搜索提示词接口
+     * 搜索提示词接口
+     *
      * @return
      */
     @GetMapping("/house/ershoufang/prompt")
-    public ResponseEntity housePrompt(@RequestParam(required = true) String keyWord){
+    public ResponseEntity housePrompt(@RequestParam(required = true) String keyWord) {
         System.out.println(keyWord);
         return null;
     }

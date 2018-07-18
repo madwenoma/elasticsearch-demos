@@ -1,10 +1,10 @@
 package com.lee.learn.house.domain;
 
 public class House {
-    private Long id;
+    private Long houseId;
     private String title;
     private String xiaoQu;
-    private Integer price;
+    private Double price;
     private Integer junJia;
     private String jingJiRen;
     private String huXing;
@@ -21,12 +21,12 @@ public class House {
     private String dianTi;
     private String chanQuan;
 
-    public Long getId() {
-        return id;
+    public Long getHouseId() {
+        return houseId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setHouseId(Long houseId) {
+        this.houseId = houseId;
     }
 
     public String getTitle() {
@@ -45,11 +45,11 @@ public class House {
         this.xiaoQu = xiaoQu;
     }
 
-    public Integer getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

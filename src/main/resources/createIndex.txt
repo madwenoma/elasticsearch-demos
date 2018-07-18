@@ -1,0 +1,70 @@
+{
+  "settings": {
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "ershoufang": {
+      "dynamic": false,
+      "properties": {
+        "houseId": {
+          "type": "long"
+        },
+        "title": {
+          "type": "text",
+          "index": "analyzed",
+          "analyzer": "ik_smart",
+          "search_analyzer": "ik_smart"
+        },
+        "price": {
+          "type": "integer"
+        },
+        "junJia": {
+          "type": "integer"
+        },
+        "jingJiRen": {
+           "type": "keyword"
+        },
+        "jianZhuMianJi": {
+          "type": "double"
+        },
+        "huXingJieGou": {
+           "type": "keyword"
+        },
+        "shiNeiMianJi": {
+          "type": "double"
+        },
+         "jianZhuLeiXing": {
+          "type": "keyword"
+        },
+        "chaoXiang": {
+           "type": "keyword"
+        },
+        "jianZhuJieGou": {
+          "type": "keyword"
+        },
+        "zhuangXiu": {
+          "type": "keyword"
+        },
+        "tiHuBiLi": {
+          "type": "keyword"
+        },
+        "gongNuanFangShi": {
+          "type": "keyword"
+        },
+        "dianTi": {
+          "type": "keyword"
+        },
+        "chanQuan": {
+          "type": "keyword"
+        },
+        "createTime": {
+          "type": "date",
+          "format": "strict_date_optional_time||epoch_millis"
+        },
+        "tags": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}
