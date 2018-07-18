@@ -74,6 +74,17 @@ public class HouseController {
         return new ResponseEntity(results, HttpStatus.OK);
 
     }
+
+
+    /**
+     *搜索提示词接口
+     * @return
+     */
+    @GetMapping("/house/ershoufang/prompt")
+    public ResponseEntity housePrompt(){
+
+        return null;
+    }
 }
 
 
