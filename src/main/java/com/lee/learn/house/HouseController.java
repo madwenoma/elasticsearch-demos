@@ -8,6 +8,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,7 @@ public class HouseController {
         }
 
         SearchRequestBuilder requestBuilder = esClient.prepareSearch("house").setTypes("ershoufang").setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
-        requestBuilder.setQuery(boolBuilder).setFrom(0).setSize(20);
+        requestBuilder.setQuery(boolBuilder).setFrom(1).setSize(1).addSort("price",SortOrder.ASC);
         SearchResponse rsp = requestBuilder.get();
         List<Map<String, Object>> results = new ArrayList<>();
         for (SearchHit hit : rsp.getHits()) {
