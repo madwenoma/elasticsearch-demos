@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * Created by Administrator on 2018/7/17.
- * add test remote 
+ * add test remote proxy
  */
 @RestController
 public class HouseController {
