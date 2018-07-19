@@ -9,6 +9,13 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.suggest.Suggest;
+import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilders;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +23,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static com.lee.learn.house.HouseIndexOperator.INDEX_NAME;
+import static com.lee.learn.house.HouseIndexOperator.INDEX_TYPE;
 
 /**
  * Created by Administrator on 2018/7/17.
@@ -26,6 +34,8 @@ import java.util.Map;
  */
 @RestController
 public class HouseController {
+
+    Logger logger = LoggerFactory.getLogger(HouseController.class);
 
     @Autowired
     private TransportClient esClient;
@@ -43,7 +53,7 @@ public class HouseController {
         if (title != null)
             boolBuilder.must(QueryBuilders.matchQuery("title", title));
         if (tiHuBiLi != null)
-            boolBuilder.must(QueryBuilders.matchQuery("tiHuBiLi", jingJiRen));
+            boolBuilder.must(QueryBuilders.matchQuery("tiHuBiLi", tiHuBiLi));
 
         RangeQueryBuilder priceRangeBuilder = null;
         if (minPrice != 0) {
@@ -65,7 +75,7 @@ public class HouseController {
             boolBuilder.filter(priceRangeBuilder);
         }
 
-        SearchRequestBuilder requestBuilder = esClient.prepareSearch("house").setTypes("ershoufang").setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+        SearchRequestBuilder requestBuilder = esClient.prepareSearch(INDEX_NAME).setTypes(INDEX_TYPE).setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
         requestBuilder.setQuery(boolBuilder).setFrom(1).setSize(10).addSort("price", SortOrder.ASC);
         SearchResponse rsp = requestBuilder.get();
         List<Map<String, Object>> results = new ArrayList<>();
@@ -84,9 +94,34 @@ public class HouseController {
      * @return
      */
     @GetMapping("/house/ershoufang/prompt")
-    public ResponseEntity housePrompt(@RequestParam(required = true) String keyWord) {
+    public ResponseEntity housePrompt(@RequestParam String keyWord) {
         System.out.println(keyWord);
-        return null;
+        CompletionSuggestionBuilder completionBuilder = SuggestBuilders.completionSuggestion("suggest").prefix(keyWord).size(5);
+        SuggestBuilder suggestBuilder = new SuggestBuilder();
+        String suggestName = "autocomplete";
+        suggestBuilder.addSuggestion(suggestName, completionBuilder);
+        SearchRequestBuilder requestBuilder = this.esClient.prepareSearch(INDEX_NAME).setTypes(INDEX_TYPE).suggest(suggestBuilder);
+        logger.info(requestBuilder.toString());
+        SearchResponse rsp = requestBuilder.get();
+        Suggest.Suggestion suggestion = rsp.getSuggest().getSuggestion(suggestName);
+        HashSet<String> suggestSet = new HashSet<>();
+        int suggestCount = 0;
+        for (Object term : suggestion.getEntries()) {
+            if (term instanceof CompletionSuggestion.Entry) {
+                CompletionSuggestion.Entry item = (CompletionSuggestion.Entry) term;
+                for (CompletionSuggestion.Entry.Option option : item.getOptions()) {
+                    String suggestText = option.getText().toString();
+                    if (suggestSet.contains(suggestText))
+                        continue;
+                    suggestSet.add(suggestText);
+                    suggestCount++;
+                }
+            }
+            if (suggestCount++ > 5)//最多5个提示词
+                break;
+        }
+        List<Object> suggestTexts = Arrays.asList(suggestSet.toArray());
+        return new ResponseEntity(suggestTexts, HttpStatus.OK);
     }
 }
 

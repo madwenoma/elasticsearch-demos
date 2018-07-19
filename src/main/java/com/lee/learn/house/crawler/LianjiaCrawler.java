@@ -5,8 +5,10 @@ import cn.edu.hfut.dmic.webcollector.model.Page;
 import cn.edu.hfut.dmic.webcollector.plugin.ram.RamCrawler;
 import com.lee.learn.house.HouseIndexOperator;
 import com.lee.learn.house.domain.House;
+import com.lee.learn.house.domain.HouseIndexTemplate;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.select.Elements;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,11 +33,11 @@ public class LianjiaCrawler extends RamCrawler {
         this.getConf().setDefaultUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36 Core/1.47.933.400 QQBrowser/9.4.8699.400");
         this.setThreads(2);
         this.setMaxExecuteCount(2);
-          /*do not fetch jpg|png|gif*/
+        /*do not fetch jpg|png|gif*/
         this.addRegex("-.*\\.(jpg|png|gif).*");
         /*do not fetch url contains #*/
         this.addRegex("-.*#.*");
-        for (int i = 2; i < 5; i++) {
+        for (int i = 2; i < 4; i++) {
             this.addSeed("https://bj.lianjia.com/ershoufang/pg" + i + "/", "houseList");
         }
     }
@@ -68,7 +70,7 @@ public class LianjiaCrawler extends RamCrawler {
         final int[] startField = {6};
         Field[] fields = house.getClass().getDeclaredFields();
         es.forEach(element -> {
-                        String key = element.children().text();
+                    String key = element.children().text();
                     String value = element.ownText();
                     if (value.contains("暂无数据")) {
                         System.out.println(key + ":无数据");
@@ -110,7 +112,9 @@ public class LianjiaCrawler extends RamCrawler {
             if (page.url().endsWith(".html")) {
 //                System.out.println(page.select("body > div.sellDetailHeader > div > div > div.title > h1").text());
                 House house = createHouse(page);
-                boolean createIndexResult = indexOperator.createIndex(house);
+                HouseIndexTemplate houseIndexTemplate = new HouseIndexTemplate();
+                BeanUtils.copyProperties(house, houseIndexTemplate);
+                boolean createIndexResult = indexOperator.createIndex(houseIndexTemplate);
                 System.out.println(createIndexResult);
             }
         }

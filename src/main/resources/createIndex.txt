@@ -11,7 +11,7 @@
         },
         "title": {
           "type": "text",
-          "index": "analyzed",
+          "index": "true",
           "analyzer": "ik_smart",
           "search_analyzer": "ik_smart"
         },
@@ -63,6 +63,9 @@
         },
         "tags": {
           "type": "text"
+        },
+        "suggest": {
+          "type": "completion"
         }
       }
     }

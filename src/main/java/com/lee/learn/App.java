@@ -22,6 +22,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -38,9 +39,10 @@ import java.util.Map;
 @ComponentScan(basePackages = {
         "com.lee.learn"
 })
+@EnableAsync
 public class App {
 
-    @Autowired
+//    @Autowired
     private TransportClient client;
 
     @PutMapping("/add/people/man")
@@ -132,12 +134,6 @@ public class App {
 
         return new ResponseEntity(result, HttpStatus.OK);
 
-    }
-
-
-    @GetMapping("/")
-    public String index() {
-        return "index";
     }
 
 
