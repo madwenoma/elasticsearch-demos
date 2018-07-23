@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.lee.learn.house.HouseIndexOperator.INDEX_NAME;
 import static com.lee.learn.house.HouseIndexOperator.INDEX_TYPE;
@@ -120,7 +121,8 @@ public class HouseController {
             if (suggestCount++ > 5)//最多5个提示词
                 break;
         }
-        List<Object> suggestTexts = Arrays.asList(suggestSet.toArray());
+        List<Object> suggestTexts = suggestSet.stream().collect(Collectors.toList());;
+
         return new ResponseEntity(suggestTexts, HttpStatus.OK);
     }
 }
