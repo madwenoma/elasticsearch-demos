@@ -1,10 +1,15 @@
 {
   "settings": {
-    "number_of_replicas": 0
+    "number_of_replicas": 0,
+    "index.store.type": "niofs",
+    "index.query.default_field": "title"
   },
   "mappings": {
     "ershoufang": {
-      "dynamic": false,
+      "dynamic": "strict",//索引结构不会变化了用strict，默认true，开发时候用false上线后strict
+      "_all": {
+        "enabled": false
+      }
       "properties": {
         "houseId": {
           "type": "long"
