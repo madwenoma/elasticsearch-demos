@@ -1,5 +1,6 @@
 package com.lee.learn;
 
+import com.lee.learn.house.rabbit.demos.SimpleSender;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
@@ -15,9 +16,11 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,7 +46,7 @@ import java.util.Map;
 @EnableAsync
 public class App {
 
-//    @Autowired
+    //    @Autowired
     private TransportClient client;
 
     @PutMapping("/add/people/man")
@@ -136,6 +140,11 @@ public class App {
 
     }
 
+
+    @Bean
+    public Queue helloQueue() {
+        return new Queue("boot-rabbit-queue");
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
