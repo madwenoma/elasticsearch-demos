@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TopicTest {
@@ -16,7 +18,9 @@ public class TopicTest {
 
 
     @Test
-    public void sendTopic() {
-        sender.send("this is topic message");
+    public void sendTopic() throws IOException {
+//        sender.sendDelete("this is topic delete message");
+        sender.sendAdd("this is topic add message");
+        System.in.read();
     }
 }

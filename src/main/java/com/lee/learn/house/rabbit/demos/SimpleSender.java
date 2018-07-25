@@ -12,7 +12,7 @@ public class SimpleSender {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @PostConstruct
+//    @PostConstruct
     public void autoSend() {
         this.send("hello,boot rabbit!");
     }
