@@ -11,20 +11,32 @@ import java.util.UUID;
 
 
 @Component
-public class TopicSender implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnCallback {
+public class TopicSender {
 
 
     private RabbitTemplate rabbitTemplate;
 
     /**
-     * 单例的消息回执是最后一个。
      * @param rabbitTemplate
      */
     @Autowired
     public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
-        this.rabbitTemplate.setConfirmCallback(this);
-        this.rabbitTemplate.setReturnCallback(this);
+        this.rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
+            System.out.println("confirm--:correlationData:" + correlationData + ",ack:" + ack + ",cause:" + cause);
+            if (ack) {
+                // 处理ack
+
+            } else {
+                // 处理nack, 此时cause包含nack的原因。
+                // 如当发送消息给一个不存在的Exchange。这种情况Broker会关闭Channel；
+                // 当Broker关闭或发生网络故障时，需要重新发送消息。
+                // 暂时先日志记录，包括correlationData, cause等。
+            }
+        });
+        this.rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey)
+                -> System.out.println("return--message:" + new String(message.getBody())
+                + ",replyCode:" + replyCode + ",replyText:" + replyText + ",exchange:" + exchange + ",routingKey:" + routingKey));
     }
 
     public void sendUpdate(String msg) {
@@ -37,19 +49,8 @@ public class TopicSender implements RabbitTemplate.ConfirmCallback, RabbitTempla
 //        int i = 1 / 0;
     }
 
-
     public void sendDelete(String msg) {
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, "boot-routing.delete", msg);
     }
 
-
-    @Override
-    public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-        System.out.println("confirm--:correlationData:" + correlationData + ",ack:" + ack + ",cause:" + cause);
-    }
-
-    @Override
-    public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
-        System.out.println("return--message:" + new String(message.getBody()) + ",replyCode:" + replyCode + ",replyText:" + replyText + ",exchange:" + exchange + ",routingKey:" + routingKey);
-    }
 }

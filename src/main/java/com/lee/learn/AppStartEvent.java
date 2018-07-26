@@ -1,5 +1,6 @@
 package com.lee.learn;
 
+import com.lee.learn.douban.DoubanMovieCrawler;
 import com.lee.learn.house.crawler.LianjiaCrawler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -15,6 +16,8 @@ public class AppStartEvent implements ApplicationListener<ContextRefreshedEvent>
 
     @Autowired
     private LianjiaCrawler lianjiaCrawler;
+    @Autowired
+    private DoubanMovieCrawler doubanMovieCrawler;
 
     @Override
     @Async
@@ -28,13 +31,13 @@ public class AppStartEvent implements ApplicationListener<ContextRefreshedEvent>
 //            }
 
         }
-//        new Thread(() -> {
-//            try {
-//                lianjiaCrawler.start(3);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
+        new Thread(() -> {
+            try {
+                doubanMovieCrawler.start(3);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 }

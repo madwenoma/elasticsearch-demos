@@ -18,9 +18,12 @@ public class TopicTest {
 
 
     @Test
-    public void sendTopic() throws IOException {
+    public void sendTopic() throws IOException, InterruptedException {
 //        sender.sendDelete("this is topic delete message");
-        sender.sendAdd("this is topic add message");
+        for (int i = 0; i < 200; i++) {
+            Thread.sleep(1000);
+            sender.sendAdd("this is topic add message");
+        }
         System.in.read();
     }
 }
