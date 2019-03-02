@@ -1,8 +1,12 @@
 package com.lee.learn;
 
+import com.lee.learn.house.rabbit.demos.transaction.EventManager;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -128,6 +132,34 @@ public class RabbitMQConfig {
     }
 
     ///////////////////////////////////死信队列 相关   end/////////////////////////////////////
+
+
+    ////////////////////////////////分布式事务相关 start/////////////////////////////////
+
+    public static final String TRAN_FOO_SUCC_QUEUE = "foo-success-queue";
+    public static final String TRAN_BAR_FAIL_QUEUE = "bar-failure-queue";
+
+    @Bean
+    public Queue successQueue() {
+        return new Queue(TRAN_FOO_SUCC_QUEUE);
+    }
+
+    @Bean
+    public Queue failureQueue() {
+        return new Queue(TRAN_BAR_FAIL_QUEUE);
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public EventManager eventManager(JdbcTemplate jdbcTemplate, RabbitTemplate rabbitTemplate) {
+        return new EventManager(jdbcTemplate, rabbitTemplate);
+    }
+
+    ////////////////////////////////分布式事务相关 end/////////////////////////////////
 
 
 //    @Bean
